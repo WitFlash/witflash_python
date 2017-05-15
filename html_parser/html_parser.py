@@ -29,7 +29,7 @@ class myHTMLParser(HTMLParser): # class for parse main page
     def validate(self, link): 
         if len(link) == 0: # if find empty url
             return('')
-        elif link in self.find_links or '#' in link or 'javascript:' in link or link == '/' or '.php' in link: # if link go to the start page or it's script
+        elif link in self.find_links or '#' in link or '?' in link or 'javascript:' in link or link == '/' or '.php' in link: # if link go to the start page or it's script
             return('')
         elif link[0] != '/' and self.site_name not in link:
             return('')
