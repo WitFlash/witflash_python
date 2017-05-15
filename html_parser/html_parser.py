@@ -145,9 +145,3 @@ while success:
 
 make_levels()
 input('Job is done.\nPress any key to Exit.')
-
-
-
-
-
-# test
