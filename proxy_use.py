@@ -17,6 +17,7 @@ def useproxy():
     'http': '212.114.99.36:80',
     'http': '36.66.253.17:8088'
     }
+    print(type(proxies))
     proxy = request.ProxyHandler(proxies)
     opener = request.build_opener(proxy)
     request.install_opener(opener)
