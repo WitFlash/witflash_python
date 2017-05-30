@@ -1,6 +1,7 @@
 from urllib import request
 from html.parser import HTMLParser
 import sys, os
+import useproxy
 
 class myHTMLParser(HTMLParser): # class for parse main page
     def __init__(self, protocol, site_name, url, *args, **kwargs):
@@ -82,6 +83,7 @@ def start():
     while True:
         site = input('Enter site name that you want to parse (without "http://" or "https://") or type \"E\" to Exit:\n')
         if site == 'E':
+            print("Shutting down...")
             sys.exit()
         response = check_protocol(site)
         if response == False: 
@@ -125,13 +127,43 @@ def make_levels():
         elif url.count('/') == 5:
             with open('level_3.txt', 'a') as level_3:
                 level_3.write(url + '\n')
+def user_choice():
+    while True:
+        choice = input('(Y)es/(N)o: ')
+        if choice == 'Y':
+            return(True)
+        elif choice == 'N':
+            return(False)
+        else:
+            print("Make the correct choice.")
+def use_proxy():
+    print("Do you want to use proxy?\nIt's more anonymus but it take a lot longer.\n"
+          "WARNING! With proxies it's possible to miss some pages.")
+    if user_choice():
+        proxylist = useproxy.getlist()
+        if proxylist:
+            return(proxylist)
+        else:
+            print("Proxy servers are not available now.\nDo you want to continue with local IP?")
+            if user_choice():
+                return(False)
+            else:
+                print("Shutting down...")
+                sys.exit()
+    else:
+        return(False)
 
+# === Get correct URL and create dir for project ===
+proxylist = use_proxy() # Make choice to use proxy or not
+useproxy.random(proxylist)
 full_site = start()
-protocol = full_site[0]
-site = full_site[1]
+protocol, site = full_site
 change_dir(site) # change directory to the name of parsing site and create files "map_site" and "checked_list"
-success = True # variable to stop parsing process if no link has been added to map_site (all links created already)
 
+# =======================
+# ===== MAIN SCRIPT =====
+# =======================
+success = True # variable to stop parsing process if no link has been added to map_site (all links created already)
 while success:
     success = False
     with open('urls.txt', 'r') as f:
@@ -140,6 +172,7 @@ while success:
         with open('checked_links.txt', 'r') as f:
             checked_links = f.read().split('\n')
         if url not in checked_links and url.count('/') < 6:
+            useproxy.random(proxylist)
             parser = myHTMLParser(protocol, site, url)
             success = True
 
